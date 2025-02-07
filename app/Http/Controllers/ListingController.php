@@ -14,7 +14,7 @@ class ListingController extends Controller
     // show all listings
     public function index() {
         return view('listings.index', [
-            'listings' => Listing::latest()->filter(request(['tag','search']))->get() //latest() ugyanaz, mint az all(), csak rendezi
+            'listings' => Listing::latest()->filter(request(['tag','search']))->paginate(6) //latest() ugyanaz, mint az all(), csak rendezi
         ]);
     }
 
@@ -41,6 +41,10 @@ class ListingController extends Controller
             'tags' => 'required',
             'description' => 'required'
         ]);
+
+        if($request->hasFile('logo')) {
+            $formFields['logo'] = $request->file('logo')->store('logos', 'public');
+        }
 
         Listing::create($formFields);
 
